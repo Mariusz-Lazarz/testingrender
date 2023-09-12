@@ -1,7 +1,23 @@
 const express = require("express");
 const dns = require("dns");
+const rateLimit = require("express-rate-limit");
 const app = express();
 const PORT = process.env.PORT || 3000;
+
+app.use((req, res, next) => {
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Methods", "POST, GET, PUT");
+  res.setHeader("Access-Control-Allow-Headers", "Content-Type");
+  next();
+});
+
+const limiter = rateLimit({
+  windowMs: 10 * 1000,
+  max: 1,
+  message: "Too many requests, please try again after 10 seconds.",
+});
+
+app.use("/cname", limiter);
 
 app.get("/cname", (req, res) => {
   const domain = req.query.domain;

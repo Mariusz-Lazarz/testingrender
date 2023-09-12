@@ -20,7 +20,7 @@ app.use((req, res, next) => {
 //   message: "Too many requests, please try again after 10 seconds.",
 // });
 
-app.use("/cname", limiter);
+// app.use("/cname", limiter);
 
 app.get("/cname", (req, res) => {
   const domain = req.query.domain;

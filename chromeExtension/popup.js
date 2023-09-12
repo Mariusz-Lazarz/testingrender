@@ -5,12 +5,11 @@ document.getElementById("fetchButton").addEventListener("click", async () => {
 
   try {
     const response = await fetch(
-      `https://mariusz-api-test.onrender.com/cname?domain=${domain}`,
+      `http://localhost:3000/cname?domain=${domain}`,
       {
         method: "GET",
         headers: {
           "Content-Type": "application/json",
-          "Access-Control-Allow-Origin": "*",
         },
       }
     );

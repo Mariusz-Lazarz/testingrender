@@ -14,11 +14,11 @@ app.use((req, res, next) => {
   next();
 });
 
-const limiter = rateLimit({
-  windowMs: 10 * 1000,
-  max: 1,
-  message: "Too many requests, please try again after 10 seconds.",
-});
+// const limiter = rateLimit({
+//   windowMs: 10 * 1000,
+//   max: 1,
+//   message: "Too many requests, please try again after 10 seconds.",
+// });
 
 app.use("/cname", limiter);
 

@@ -22,18 +22,42 @@ app.use((req, res, next) => {
 
 // app.use("/cname", limiter);
 
-app.get("/cname", (req, res) => {
+const recursiveResolveCname = (domain, callback) => {
+  dns.resolveCname(domain, (err, addresses) => {
+    if (err) {
+      if (err.code === "ENODATA") {
+        return callback(null, domain);
+      }
+      return callback(err, null);
+    }
+
+    if (addresses && addresses.length > 0) {
+      return recursiveResolveCname(addresses[0], callback);
+    }
+
+    callback(null, domain);
+  });
+};
+
+app.get("/resolve", (req, res) => {
   const domain = req.query.domain;
 
   if (!domain) {
-    return res.status(400).json({ error: "Domain parameter is required." });
+    return res
+      .status(400)
+      .send({ error: "Please provide a domain parameter." });
   }
 
-  dns.resolveCname(domain, (err, addresses) => {
+  recursiveResolveCname(domain, (err, finalCname) => {
     if (err) {
-      return res.status(500).json({ error: err.message });
+      return res.status(500).send({ error: err.message });
     }
-    res.json({ cname: addresses });
+
+    if (finalCname) {
+      res.send({ domain, cname: finalCname });
+    } else {
+      res.status(404).send({ error: "CNAME not found for the given domain." });
+    }
   });
 });
 
